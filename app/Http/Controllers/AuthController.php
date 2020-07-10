@@ -40,7 +40,7 @@ class AuthController extends Controller
             return redirect('')->with('message', 'Login Failed');
 
         }
-
+        //below line is to generate token
         $authto =  $user->createToken('Auth Token')->accessToken;
         Auth::attempt($credentials);
             return redirect()->intended('dashboard')->with('authtoken', $authto);;
@@ -56,6 +56,9 @@ class AuthController extends Controller
         'email' => 'required|email|unique:users',
         'password' => 'required|min:6',
         ]);
+
+
+
         $mailData = [
             'name'=> $request->name,
             'email' => $request->email,
@@ -64,7 +67,7 @@ class AuthController extends Controller
 
         $data = $request->all();
         $check = $this->create($data);
-
+        $authto =  $check->createToken('Auth Token')->accessToken;
         //\Mail::to($request->email)->send(new \App\Mail\WelcomeMail($mailData));
         //Mail::to($request->email)->send(new WelcomeMail($mailData));
         return redirect('')->with('message', 'User Successfully Registered!');
@@ -81,7 +84,8 @@ class AuthController extends Controller
       ]);
     }
 
-    public function logout() {
+    public function logout(Request $request) {
+
         Session::flush();
         Auth::logout();
         return Redirect('/');
